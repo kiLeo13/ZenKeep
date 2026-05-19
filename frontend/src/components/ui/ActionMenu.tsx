@@ -12,6 +12,8 @@ export interface MenuActionItem {
   icon?: React.ReactNode
   onClick: () => void
   className?: string
+  variant?: "default" | "danger"
+  separatorBefore?: boolean
   style?: React.CSSProperties
 }
 
@@ -57,17 +59,25 @@ export function ActionMenu({
           )}
 
           {items.map((item, index) => (
-            <DropdownMenu.Item
-              key={`${item.label}-${index}`}
-              className={clsx(styles.menuItem, item.className)}
-              onSelect={item.onClick}
-              onClick={isolateEvents ? (e) => e.stopPropagation() : undefined}
-              style={item.style}
-            >
-              <div className={styles.iconWrapper}>{item.icon}</div>
-              <span className={styles.itemLabel}>{item.label}</span>
-              <Ripple />
-            </DropdownMenu.Item>
+            <React.Fragment key={`${item.label}-${index}`}>
+              {item.separatorBefore && (
+                <DropdownMenu.Separator className={styles.menuSeparator} />
+              )}
+              <DropdownMenu.Item
+                className={clsx(
+                  styles.menuItem,
+                  item.variant === "danger" && styles.menuItemDanger,
+                  item.className
+                )}
+                onSelect={item.onClick}
+                onClick={isolateEvents ? (e) => e.stopPropagation() : undefined}
+                style={item.style}
+              >
+                <div className={styles.iconWrapper}>{item.icon}</div>
+                <span className={styles.itemLabel}>{item.label}</span>
+                <Ripple />
+              </DropdownMenu.Item>
+            </React.Fragment>
           ))}
           <DropdownMenu.Arrow className={styles.menuArrow} />
         </DropdownMenu.Content>

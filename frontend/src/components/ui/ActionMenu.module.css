@@ -47,6 +47,15 @@
   background-color: #58457c;
 }
 
+.menuItemDanger {
+  color: #ef8f8f;
+}
+
+.menuItemDanger[data-highlighted] {
+  background-color: rgba(166, 57, 57, 0.22);
+  color: #ffabab;
+}
+
 .iconWrapper {
   display: flex;
   align-items: center;
