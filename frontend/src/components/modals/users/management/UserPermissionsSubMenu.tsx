@@ -1,20 +1,13 @@
 import { useEffect, useMemo, useState, type JSX } from "react"
 import type { UserResponseData } from "@/types/api/users"
 
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
-
 import { Permission } from "@/models/Permission"
-import { FaChevronRight } from "react-icons/fa"
-import { BsCheck } from "react-icons/bs"
 import { MdSecurity } from "react-icons/md"
-import { Ripple } from "@/components/ui/effects/Ripple"
-import { Button } from "@/components/ui/buttons/Button"
+import { MultiSelectMenu, type MenuOption } from "@/components/ui/MultiSelectMenu"
 import { useSessionStore } from "@/stores/useSessionStore"
 import { useTranslation } from "react-i18next"
 import { userService } from "@/services/userService"
 import { toasts } from "@/utils/toastUtils"
-
-import styles from "./UserPermissionsSubMenu.module.css"
 
 type UserPermissionsSubMenuProps = {
   user: UserResponseData
@@ -54,7 +47,12 @@ export function UserPermissionsSubMenu({
 
   useEffect(() => {
     setSavedPermissions(user.permissions)
-  }, [user.permissions])
+    setSelectedOffsets(
+      allPermissions
+        .filter((p) => Permission.hasRaw(user.permissions, p))
+        .map((p) => p.offset)
+    )
+  }, [allPermissions, user.permissions])
 
   const menuOptions = useMemo(
     () =>
@@ -67,12 +65,8 @@ export function UserPermissionsSubMenu({
     [savedPermissions, self?.permissions, allPermissions, t]
   )
 
-  const handleTogglePerm = (offset: number) => {
-    setSelectedOffsets((prev) =>
-      prev.includes(offset)
-        ? prev.filter((o) => o !== offset)
-        : [...prev, offset]
-    )
+  const handleSelectedOffsetsChange = (values: (string | number)[]) => {
+    setSelectedOffsets(values.filter((value): value is number => typeof value === "number"))
   }
 
   const handleSavePerms = async () => {
@@ -92,72 +86,18 @@ export function UserPermissionsSubMenu({
   }
 
   return (
-    <DropdownMenu.Sub>
-      <DropdownMenu.SubTrigger className={styles.item}>
-        <div className={styles.labelContainer}>
-          <span className={styles.optIcon}>
-            <MdSecurity size={"1.3em"} />
-          </span>
-          <span className={styles.itemLabel} style={{ flex: 1 }}>
-            {t("menus.users.perms.label")}
-          </span>
-          <FaChevronRight className={styles.chevron} />
-        </div>
-      </DropdownMenu.SubTrigger>
-
-      <DropdownMenu.Portal>
-        <DropdownMenu.SubContent
-          className={styles.content}
-          sideOffset={8}
-          alignOffset={-5}
-          style={{ zIndex: 100 }}
-        >
-          <div className={styles.scrollContainer}>
-            {menuOptions.map((opt) => {
-              const isChecked = selectedOffsets.includes(opt.id)
-
-              return (
-                <DropdownMenu.CheckboxItem
-                  key={opt.id}
-                  className={styles.item}
-                  checked={isChecked}
-                  disabled={opt.disabled}
-                  onSelect={(e) => e.preventDefault()}
-                  onCheckedChange={() => handleTogglePerm(opt.id)}
-                >
-                  <Ripple />
-                  <div className={styles.labelContainer}>
-                    <span className={styles.itemLabel}>{opt.label}</span>
-                  </div>
-                  <div className={styles.checkbox}>
-                    <DropdownMenu.ItemIndicator className={styles.indicator}>
-                      <BsCheck size={16} strokeWidth={1} />
-                    </DropdownMenu.ItemIndicator>
-                  </div>
-                </DropdownMenu.CheckboxItem>
-              )
-            })}
-          </div>
-
-          {showSaveFooter && (
-            <>
-              <DropdownMenu.Separator className={styles.separator} />
-              <div className={styles.footer}>
-                <Button
-                  className={styles.saveButton}
-                  isLoading={isLoading}
-                  disabled={isLoading || !isDirty}
-                  onClick={handleSavePerms}
-                  loaderProps={{ scale: 0.8 }}
-                >
-                  {t("menus.users.perms.saveButton")}
-                </Button>
-              </div>
-            </>
-          )}
-        </DropdownMenu.SubContent>
-      </DropdownMenu.Portal>
-    </DropdownMenu.Sub>
+    <MultiSelectMenu
+      variant="submenu"
+      label={t("menus.users.perms.label")}
+      icon={<MdSecurity size={"1.3em"} />}
+      options={menuOptions}
+      values={selectedOffsets}
+      onChange={handleSelectedOffsetsChange}
+      onSave={handleSavePerms}
+      isLoading={isLoading}
+      saveDisabled={!isDirty}
+      showFooter={showSaveFooter}
+    />
   )
 }
 
@@ -166,7 +106,7 @@ function getComputedOptions(
   viewerMask: number,
   allPerms: Permission[],
   t: (key: string) => string
-): { id: number; label: string; disabled: boolean }[] {
+): MenuOption[] {
   const isTargetAdmin = Permission.hasRaw(targetMask, Permission.Administrator)
   const isViewerAdmin = Permission.hasRaw(viewerMask, Permission.Administrator)
   const isViewerManager = Permission.hasEffective(

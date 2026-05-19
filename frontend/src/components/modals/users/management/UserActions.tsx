@@ -13,6 +13,7 @@ import { AppTooltip } from "@/components/ui/AppTooltip"
 import { SuspendUserModal } from "./SuspendUserModal"
 import { DeleteUserModal } from "./DeleteUserModal"
 import { UserPermissionsSubMenu } from "./UserPermissionsSubMenu"
+import { UserDepartmentsSubMenu } from "./UserDepartmentsSubMenu"
 import { useRetainedModalValue } from "@/hooks/useModalPresence"
 import { usePermission } from "@/hooks/usePermission"
 import { useSessionStore } from "@/stores/useSessionStore"
@@ -31,6 +32,8 @@ export function UserActions({ user }: UserActionsProps): JSX.Element | null {
   const [activeModal, setActiveModal] = useState<ModalType>("NONE")
 
   const hasManagePerms = usePermission(Permission.ManagePermissions)
+  const hasManageDepartments = usePermission(Permission.ManageDepartments)
+  const hasManageUsers = usePermission(Permission.ManageUsers)
   const hasDeleteUsers = usePermission(Permission.DeleteUsers)
   const hasPunishUsers = usePermission(Permission.PunishUsers)
 
@@ -119,6 +122,9 @@ export function UserActions({ user }: UserActionsProps): JSX.Element | null {
             )}
 
             {hasManagePerms && <UserPermissionsSubMenu user={user} />}
+            {hasManageDepartments && hasManageUsers && (
+              <UserDepartmentsSubMenu user={user} />
+            )}
           </DropdownMenu.Content>
         </DropdownMenu.Portal>
       </DropdownMenu.Root>

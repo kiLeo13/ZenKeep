@@ -165,6 +165,10 @@ function getUserCapabilities(
     self.permissions,
     Permission.ManagePermissions
   )
+  const hasManageDepartments = Permission.hasEffective(
+    self.permissions,
+    Permission.ManageDepartments
+  )
   const hasDeleteUsers = Permission.hasEffective(
     self.permissions,
     Permission.DeleteUsers
@@ -180,6 +184,9 @@ function getUserCapabilities(
   // Manage Permissions: Needs `ManagePerms`. Target cannot be Admin at all.
   const canManagePerms = hasManagePerms && !targetIsAdmin
 
+  // Manage department memberships: needs both department and user management.
+  const canManageDepartmentMemberships = hasManageDepartments && hasManageUsers
+
   // Delete Users: Needs `DeleteUsers`. Cannot delete self. Target cannot be Admin.
   const canDelete = hasDeleteUsers && !isSelf && !targetIsAdmin
 
@@ -188,7 +195,8 @@ function getUserCapabilities(
     hasPunishUsers && !isSelf && !targetIsAdmin && !targetHasManagePerms
 
   // If the user can do at least one action, we should mount the UserActions component
-  const shouldRenderActions = canManagePerms || canDelete || canPunish
+  const shouldRenderActions =
+    canManagePerms || canManageDepartmentMemberships || canDelete || canPunish
 
   return { canEditProfile, shouldRenderActions }
 }
