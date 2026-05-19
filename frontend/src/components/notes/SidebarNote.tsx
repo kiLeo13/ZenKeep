@@ -1,11 +1,6 @@
 import type { NoteResponseData } from "@/types/api/notes"
 import { ActionMenu, type MenuActionItem } from "../ui/ActionMenu"
-import {
-  useRef,
-  useState,
-  type JSX,
-  type MouseEventHandler
-} from "react"
+import { useRef, useState, type JSX, type MouseEventHandler } from "react"
 
 import clsx from "clsx"
 
@@ -102,10 +97,7 @@ export function SidebarNote({ note, onClick }: SidebarNoteProps): JSX.Element {
   return (
     <div
       onClick={onClick}
-      className={clsx(
-        styles.noteItem,
-        isOpen && styles.open
-      )}
+      className={clsx(styles.noteItem, isOpen && styles.open)}
       ref={elementRef}
     >
       <span className={styles.noteItemTitle}>{note.name}</span>
@@ -171,13 +163,6 @@ function getMenuOptions(
       onClick: () => setIsPatching(true)
     })
   }
-  if (canDelete) {
-    menuOptions.push({
-      label: t("menus.notes.opts.delete"),
-      icon: <FaTrashAlt size={"1.3em"} color="#a285d1" />,
-      onClick: () => setIsDeleting(true)
-    })
-  }
 
   menuOptions.push(
     {
@@ -191,6 +176,16 @@ function getMenuOptions(
       onClick: onCopyId
     }
   )
+
+  if (canDelete) {
+    menuOptions.push({
+      label: t("menus.notes.opts.delete"),
+      icon: <FaTrashAlt size={"1.3em"} color="currentColor" />,
+      onClick: () => setIsDeleting(true),
+      variant: "danger",
+      separatorBefore: true
+    })
+  }
 
   return menuOptions
 }

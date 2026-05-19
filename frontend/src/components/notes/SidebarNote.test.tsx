@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react"
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import type { ReactNode } from "react"
 import type { NoteResponseData } from "@/types/api/notes"
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest"
@@ -37,13 +37,23 @@ vi.mock("../ui/ActionMenu", () => ({
     items
   }: {
     children: ReactNode
-    items: Array<{ label: string; onClick: () => void }>
+    items: Array<{
+      label: string
+      onClick: () => void
+      separatorBefore?: boolean
+      variant?: string
+    }>
   }) => (
     <>
       {children}
-      <div>
+      <div role="menu">
         {items.map((item) => (
-          <button key={item.label} onClick={item.onClick}>
+          <button
+            key={item.label}
+            data-separator-before={item.separatorBefore ? "true" : undefined}
+            data-variant={item.variant}
+            onClick={item.onClick}
+          >
             {item.label}
           </button>
         ))}
@@ -158,13 +168,27 @@ describe("SidebarNote", () => {
     })
   })
 
-  it("includes edit and delete options when the user has permissions", () => {
+  it("orders destructive actions after utility actions", () => {
     vi.mocked(usePermission).mockReturnValue(true)
 
     render(<SidebarNote note={makeNote()} />)
 
-    expect(screen.getByRole("button", { name: "Editar" })).toBeInTheDocument()
-    expect(screen.getByRole("button", { name: "Excluir" })).toBeInTheDocument()
+    const menuItems = within(screen.getByRole("menu")).getAllByRole("button")
+
+    expect(menuItems.map((item) => item.textContent)).toEqual([
+      "Editar",
+      "Baixar",
+      "Copiar ID (#42)",
+      "Excluir"
+    ])
+    expect(screen.getByRole("button", { name: "Excluir" })).toHaveAttribute(
+      "data-separator-before",
+      "true"
+    )
+    expect(screen.getByRole("button", { name: "Excluir" })).toHaveAttribute(
+      "data-variant",
+      "danger"
+    )
   })
 })
 
