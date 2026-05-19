@@ -49,6 +49,34 @@
   will-change: transform, opacity;
 }
 
+.subTrigger {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  outline: none;
+  color: #b4acc0;
+  font-size: 14px;
+  overflow: hidden;
+  user-select: none;
+  transition: background-color 100ms;
+}
+
+.subTrigger:focus,
+.subTrigger:hover,
+.subTrigger[data-state="open"] {
+  background-color: #3b3347;
+}
+
+.subTrigger[data-disabled] {
+  opacity: 0.3;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
 .scrollContainer {
   flex: 1;
   overflow-y: auto;
@@ -58,6 +86,7 @@
 }
 
 .item {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -68,6 +97,7 @@
   outline: none;
   color: #b4acc0;
   font-size: 14px;
+  overflow: hidden;
   user-select: none;
   transition: background-color 0.1s;
 }
@@ -101,6 +131,12 @@
   font-weight: 500;
 }
 
+.subChevron {
+  font-size: 10px;
+  color: #b5bac1;
+  margin-left: auto;
+}
+
 .checkbox {
   width: 20px;
   height: 20px;
@@ -112,6 +148,7 @@
   transition: all 0.15s ease;
   background-color: transparent;
   flex-shrink: 0;
+  margin-left: 12px;
 }
 
 .item[data-state="checked"] .checkbox {
@@ -161,6 +198,22 @@
 
 .saveButton:hover {
   background-color: #7451a1;
+}
+
+.saveButton:hover:not(:disabled) {
+  background-color: #7451a1;
+}
+
+.saveButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.emptyMessage {
+  display: block;
+  padding: 8px 12px;
+  color: #8d8499;
+  font-size: 13px;
 }
 
 .arrow {
