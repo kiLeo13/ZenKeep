@@ -493,6 +493,10 @@
         "label": "Permissões",
         "saveButton": "Salvar"
       },
+      "departments": {
+        "label": "Departamentos",
+        "empty": "Nenhum departamento criado."
+      },
       "actions": {
         "update": {
           "error": "Erro ao atualizar usuário."
