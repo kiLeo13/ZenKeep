@@ -133,6 +133,11 @@ function getComputedOptions(
       disabled = true
     }
 
-    return { id: p.offset, label: t(p.label), disabled }
+    return {
+      id: p.offset,
+      label: t(`${p.label}.name`),
+      info: t(`${p.label}.desc`),
+      disabled
+    }
   })
 }
