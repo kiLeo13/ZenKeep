@@ -59,7 +59,9 @@ export function MultiSelectMenu({
 }: MultiSelectMenuProps): JSX.Element {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
-  const [pendingIds, setPendingIds] = useState<Set<MenuOptionId>>(() => new Set())
+  const [pendingIds, setPendingIds] = useState<Set<MenuOptionId>>(
+    () => new Set()
+  )
 
   const handleToggle = async (opt: MenuOption) => {
     const id = opt.id
@@ -109,7 +111,12 @@ export function MultiSelectMenu({
               <Ripple />
               <div className={styles.labelContainer}>
                 {opt.icon && <span className={styles.optIcon}>{opt.icon}</span>}
-                <span className={styles.itemLabel}>{opt.label}</span>
+                <div className={styles.textContainer}>
+                  <span className={styles.itemLabel}>{opt.label}</span>
+                  {opt.info && (
+                    <span className={styles.itemInfo}>{opt.info}</span>
+                  )}
+                </div>
               </div>
 
               <div className={styles.checkbox}>
