@@ -162,17 +162,50 @@
     }
   },
   "perms": {
-    "adm": "Administrador",
-    "createNotes": "Criar Notas",
-    "editNotes": "Editar Notas",
-    "deleteNotes": "Apagar Notas",
-    "manageUsers": "Gerenciar Usuários",
-    "deleteUsers": "Apagar Usuários",
-    "managePerms": "Gerenciar Permissões",
-    "punishUsers": "Moderar Usuários",
-    "lookup": "Realizar Consultas",
-    "readAuditLogs": "Ler Logs de Auditoria",
-    "manageDepartments": "Gerenciar Departamentos"
+    "adm": {
+      "name": "Administrador",
+      "desc": "Acesso irrestrito. Admins são imunes a todas as restrições e não podem ser modificados."
+    },
+    "createNotes": {
+      "name": "Criar Notas",
+      "desc": "Permite criar novas notas, diagramas e fazer upload de arquivos."
+    },
+    "editNotes": {
+      "name": "Editar Notas",
+      "desc": "Permite alterar o conteúdo, títulos e palavras-chave de notas existentes."
+    },
+    "deleteNotes": {
+      "name": "Apagar Notas",
+      "desc": "Permite excluir notas permanentemente."
+    },
+    "manageUsers": {
+      "name": "Gerenciar Usuários",
+      "desc": "Permite alterar o nome de outros usuários. Para gerenciar a participação deles em departamentos, também requer \"Gerenciar Departamentos\"."
+    },
+    "deleteUsers": {
+      "name": "Apagar Usuários",
+      "desc": "Permite excluir contas de usuários permanentemente."
+    },
+    "managePerms": {
+      "name": "Gerenciar Permissões",
+      "desc": "Permite conceder ou revogar permissões de outros usuários. São imunes à punições."
+    },
+    "punishUsers": {
+      "name": "Moderar Usuários",
+      "desc": "Permite suspender ou reativar contas de usuários."
+    },
+    "lookup": {
+      "name": "Realizar Consultas",
+      "desc": "Permite realizar consultas a dados cadastrais externos (como CNPJs na Receita Federal)."
+    },
+    "readAuditLogs": {
+      "name": "Ler Logs de Auditoria",
+      "desc": "Permite visualizar o histórico completo de ações."
+    },
+    "manageDepartments": {
+      "name": "Gerenciar Departamentos",
+      "desc": "Permite criar, editar, excluir departamentos e mover notas. Para alterar membros do departamento, também requer \"Gerenciar Usuários\"."
+    }
   },
   "modals": {
     "audit": {
