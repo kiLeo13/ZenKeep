@@ -254,7 +254,6 @@ review context.
 
 Company lookup misses are negatively cached in the `companies` table with `found=false`.
 The application sets `found=true` for successful Minha Receita responses and `found=false` for not-found responses explicitly; the column must not rely on a database default, because repeated not-found lookups must keep returning `404` from the cached miss instead of an empty company response.
-Successful company lookup responses report whether that individual response came from local cache through `cached`: the first provider-backed success returns `false`, and a later successful lookup for the same CNPJ returns `true` when served from the `companies` table. The frontend lookup modal preserves that distinction by allowing a displayed cache miss to be queried again, while skipping redundant repeats after a displayed cache hit.
 
 Audit log reads are exposed through `GET /audit-logs`.
 That endpoint is protected by the dedicated `PermissionReadAuditLogs` bit and returns the newest entries first with `limit` and `before_id` pagination.

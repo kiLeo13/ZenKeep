@@ -1332,9 +1332,7 @@ export const apiResources: ApiResource[] = [
       {
         name: "cached",
         type: "boolean",
-        description: [
-          "Whether this successful response was served from the local company cache. Fresh provider responses return false; later successful lookups for the same CNPJ can return true."
-        ]
+        description: ["Whether the response came from local cache."]
       }
     ],
     routes: [
@@ -1361,9 +1359,7 @@ export const apiResources: ApiResource[] = [
         responses: [
           {
             status: 200,
-            description: [
-              "Company found through the lookup provider or returned from local cache."
-            ]
+            description: ["Company found or returned from cache."]
           },
           { status: 404, description: ["Company was not found."] }
         ]
