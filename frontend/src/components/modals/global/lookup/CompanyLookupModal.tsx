@@ -52,7 +52,9 @@ export function CompanyLookupModal({
   }
 
   const handleSend = async (cleanCnpj: string) => {
-    if (cleanCnpj === company?.cnpj || cleanCnpj.length != 14) return
+    const isDisplayedCacheHit = cleanCnpj === company?.cnpj && company.cached
+    if (isDisplayedCacheHit || cleanCnpj.length != 14) return
+
     setCompany(null)
     setErrorMessage("")
 
