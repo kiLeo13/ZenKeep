@@ -278,6 +278,62 @@ func TestGetCompanyByCNPJCreatesAuditEvent(t *testing.T) {
 	}
 }
 
+func TestGetCompanyByCNPJPositiveCacheReturnsCachedResponse(t *testing.T) {
+	db := newTestDB(t)
+
+	auditSvc := newTestAuditService(t, db, 3250)
+	companyRepo := repository.NewCompanyRepository(db)
+	userRepo := repository.NewUserRepository(db)
+	lookupClient := &fakeLookupClient{
+		company: &entity.Company{
+			CNPJ:              "12345678000195",
+			LegalName:         "Magalu Teste",
+			LegalNature:       "Sociedade Empresaria Limitada",
+			CompanySize:       "DEMAIS",
+			BusinessStartDate: "2020-01-01",
+		},
+	}
+	miscSvc := NewMiscService(lookupClient, companyRepo, auditSvc, &sequenceAuditIDGenerator{next: 9000})
+
+	actor := &entity.User{
+		ID:          102,
+		Username:    "lookup-cache",
+		Email:       "lookup-cache@example.com",
+		Permissions: entity.PermissionPerformLookup,
+		Active:      true,
+		CreatedAt:   utils.NowUTC(),
+		UpdatedAt:   utils.NowUTC(),
+	}
+	if err := userRepo.Save(actor); err != nil {
+		t.Fatalf("save actor: %v", err)
+	}
+
+	freshResp, apierr := miscSvc.GetCompanyByCNPJ(actor, "12345678000195")
+	if apierr != nil {
+		t.Fatalf("fresh lookup returned api error: %#v", apierr)
+	}
+	if freshResp == nil {
+		t.Fatal("expected fresh company response")
+	}
+	if freshResp.Cached {
+		t.Fatal("expected first company lookup to return cached=false")
+	}
+
+	cachedResp, apierr := miscSvc.GetCompanyByCNPJ(actor, "12345678000195")
+	if apierr != nil {
+		t.Fatalf("cached lookup returned api error: %#v", apierr)
+	}
+	if cachedResp == nil {
+		t.Fatal("expected cached company response")
+	}
+	if !cachedResp.Cached {
+		t.Fatal("expected second company lookup to return cached=true")
+	}
+	if lookupClient.calls != 1 {
+		t.Fatalf("expected external lookup to be called once, got %d", lookupClient.calls)
+	}
+}
+
 func TestGetCompanyByCNPJNotFoundStillCreatesAuditEvent(t *testing.T) {
 	db := newTestDB(t)
 
