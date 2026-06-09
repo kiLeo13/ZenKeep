@@ -603,20 +603,15 @@ export const apiResources: ApiResource[] = [
       },
       {
         id: "membership",
-        title: "Department Membership",
+        title: "Department Membership Map",
         description: [
-          "Represents a user-to-department edge. Memberships are returned separately from departments so user objects and department objects each keep a single source of truth."
+          "Maps each department platform ID to the user platform IDs currently assigned to it. Departments without members may be omitted from the map."
         ],
         fields: [
           {
-            name: "department_id",
-            type: "string",
-            description: ["Department platform ID."]
-          },
-          {
-            name: "user_id",
-            type: "string",
-            description: ["User platform ID."]
+            name: "departments",
+            type: "Record<string, string[]>",
+            description: ["Object whose keys are department IDs and whose values are arrays of user IDs."]
           }
         ]
       }
@@ -715,7 +710,7 @@ export const apiResources: ApiResource[] = [
         auth: "Bearer JWT",
         description: [
           [
-            "Lists every department membership edge. Requires both ",
+            "Lists department memberships grouped by department ID. Requires both ",
             { label: "Manage Departments" },
             " and ",
             { label: "Manage Users" },
@@ -725,7 +720,7 @@ export const apiResources: ApiResource[] = [
         responses: [
           {
             status: 200,
-            description: ["Returns memberships wrapped in a memberships property."]
+            description: ["Returns a departments object keyed by department ID, with user ID arrays as values."]
           },
           { status: 403, description: ["Requester lacks one of the required permissions."] }
         ]
