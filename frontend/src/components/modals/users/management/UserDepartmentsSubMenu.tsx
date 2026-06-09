@@ -44,10 +44,9 @@ export function UserDepartmentsSubMenu({
   )
 
   const selectedDepartmentIds = useMemo(
-    () =>
-      memberships
-        .filter((membership) => membership.user_id === user.id)
-        .map((membership) => membership.department_id),
+    () => Object.entries(memberships).flatMap(([departmentId, userIds]) =>
+      userIds.includes(user.id) ? [departmentId] : []
+    ),
     [memberships, user.id]
   )
 
@@ -66,7 +65,7 @@ export function UserDepartmentsSubMenu({
     }
 
     if (checked) {
-      addMembership({ department_id: departmentId, user_id: user.id })
+      addMembership(departmentId, user.id)
     } else {
       removeMembership(departmentId, user.id)
     }

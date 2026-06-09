@@ -263,7 +263,7 @@ export function DepartmentManagementModal({
       toasts.apiError(t("departments.toasts.membershipError"), resp)
       return
     }
-    addMembership({ department_id: selectedDepartment.id, user_id: user.id })
+    addMembership(selectedDepartment.id, user.id)
   }
 
   const requestRemoveMember = (user: UserResponseData) => {

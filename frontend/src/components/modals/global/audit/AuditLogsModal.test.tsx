@@ -200,7 +200,7 @@ describe("AuditLogsModal", () => {
     })
     useDepartmentsStore.setState({
       departments: [],
-      memberships: [],
+      memberships: {},
       state: "READY",
       membershipState: "READY",
       _fetchPromise: null,

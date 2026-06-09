@@ -85,7 +85,7 @@ describe("Sidebar", () => {
         makeDepartment("department-a", "Reclame Aqui", 0x6db9ffff),
         makeDepartment("department-b", "Social")
       ],
-      memberships: [],
+      memberships: {},
       state: "READY",
       membershipState: "READY",
       _fetchPromise: null,

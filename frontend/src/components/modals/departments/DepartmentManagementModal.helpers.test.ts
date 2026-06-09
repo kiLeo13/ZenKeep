@@ -1,4 +1,4 @@
-import type { DepartmentData, DepartmentMembershipData } from "@/types/api/departments"
+import type { DepartmentData, DepartmentUsersData } from "@/types/api/departments"
 import type { UserResponseData } from "@/types/api/users"
 
 import { describe, expect, it } from "vitest"
@@ -36,9 +36,9 @@ describe("DepartmentManagementModal helpers", () => {
   it("partitions users by department membership", () => {
     const department = makeDepartment("department-a", "Support")
     const users = [makeUser("user-a", "Ada"), makeUser("user-b", "Grace")]
-    const memberships: DepartmentMembershipData[] = [
-      { department_id: "department-a", user_id: "user-b" }
-    ]
+    const memberships: DepartmentUsersData = {
+      "department-a": ["user-b"]
+    }
 
     expect(getDepartmentUserPartitions(department, memberships, users)).toEqual({
       members: [users[1]],

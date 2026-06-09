@@ -8,7 +8,7 @@ import { UserDepartmentsSubMenu } from "./UserDepartmentsSubMenu"
 
 const { multiSelectMenuMock, departmentServiceMock, toastsMock } = vi.hoisted(
   () => ({
-    multiSelectMenuMock: vi.fn((_props: unknown) => null),
+    multiSelectMenuMock: vi.fn(() => null),
     departmentServiceMock: {
       addUser: vi.fn(),
       removeUser: vi.fn()
@@ -45,7 +45,7 @@ describe("UserDepartmentsSubMenu", () => {
         makeDepartment("dept-b", "Support"),
         makeDepartment("dept-a", "Billing")
       ],
-      memberships: [{ department_id: "dept-a", user_id: "user-a" }],
+      memberships: { "dept-a": ["user-a"] },
       state: "READY",
       membershipState: "READY",
       _fetchPromise: null,
@@ -86,10 +86,9 @@ describe("UserDepartmentsSubMenu", () => {
     ])
 
     expect(departmentServiceMock.addUser).toHaveBeenCalledWith("dept-b", "user-a")
-    expect(useDepartmentsStore.getState().memberships).toContainEqual({
-      department_id: "dept-b",
-      user_id: "user-a"
-    })
+    expect(useDepartmentsStore.getState().memberships["dept-b"]).toContain(
+      "user-a"
+    )
 
     props = getLastMenuProps()
     await props.onItemToggle({ id: "dept-a", label: "Billing" }, false, [
@@ -100,10 +99,7 @@ describe("UserDepartmentsSubMenu", () => {
       "dept-a",
       "user-a"
     )
-    expect(useDepartmentsStore.getState().memberships).not.toContainEqual({
-      department_id: "dept-a",
-      user_id: "user-a"
-    })
+    expect(useDepartmentsStore.getState().memberships["dept-a"]).toBeUndefined()
   })
 
   it("keeps membership state unchanged when a mutation fails", async () => {
@@ -126,9 +122,9 @@ describe("UserDepartmentsSubMenu", () => {
       "departments.toasts.membershipError",
       response
     )
-    expect(useDepartmentsStore.getState().memberships).toEqual([
-      { department_id: "dept-a", user_id: "user-a" }
-    ])
+    expect(useDepartmentsStore.getState().memberships).toEqual({
+      "dept-a": ["user-a"]
+    })
   })
 })
 

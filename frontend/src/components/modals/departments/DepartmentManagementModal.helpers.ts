@@ -5,7 +5,7 @@ import type {
   CreateDepartmentPayload,
   DepartmentData,
   DepartmentIconType,
-  DepartmentMembershipData,
+  DepartmentUsersData,
   UpdateDepartmentPayload
 } from "@/types/api/departments"
 
@@ -24,18 +24,14 @@ export function sortUsers(users: UserResponseData[]): UserResponseData[] {
 
 export function getDepartmentUserPartitions(
   department: DepartmentData | null,
-  memberships: DepartmentMembershipData[],
+  memberships: DepartmentUsersData,
   users: UserResponseData[]
 ): { members: UserResponseData[]; nonMembers: UserResponseData[] } {
   if (!department) {
     return { members: [], nonMembers: [] }
   }
 
-  const memberUserIds = new Set(
-    memberships
-      .filter((membership) => membership.department_id === department.id)
-      .map((membership) => membership.user_id)
-  )
+  const memberUserIds = new Set(memberships[department.id] ?? [])
 
   return {
     members: users.filter((user) => memberUserIds.has(user.id)),
