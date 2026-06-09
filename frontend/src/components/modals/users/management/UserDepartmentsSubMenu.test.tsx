@@ -8,7 +8,10 @@ import { UserDepartmentsSubMenu } from "./UserDepartmentsSubMenu"
 
 const { multiSelectMenuMock, departmentServiceMock, toastsMock } = vi.hoisted(
   () => ({
-    multiSelectMenuMock: vi.fn(() => null),
+    multiSelectMenuMock: vi.fn((props: unknown) => {
+      void props
+      return null
+    }),
     departmentServiceMock: {
       addUser: vi.fn(),
       removeUser: vi.fn()
