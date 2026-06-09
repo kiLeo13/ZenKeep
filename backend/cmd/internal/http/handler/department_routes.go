@@ -17,7 +17,7 @@ import (
 
 type DepartmentService interface {
 	GetDepartments(actor *entity.User) ([]*contract.DepartmentResponse, apierror.ErrorResponse)
-	GetDepartmentMemberships(actor *entity.User) ([]*contract.DepartmentMembershipResponse, apierror.ErrorResponse)
+	GetDepartmentMemberships(actor *entity.User) (*contract.DepartmentUsersResponse, apierror.ErrorResponse)
 	CreateDepartment(actor *entity.User, req *contract.CreateDepartmentRequest, iconFile *multipart.FileHeader) (*contract.DepartmentResponse, apierror.ErrorResponse)
 	UpdateDepartment(actor *entity.User, departmentID int64, req *contract.UpdateDepartmentRequest, iconFile *multipart.FileHeader) (*contract.DepartmentResponse, apierror.ErrorResponse)
 	DeleteDepartment(actor *entity.User, departmentID int64) apierror.ErrorResponse
@@ -54,11 +54,11 @@ func (d *DefaultDepartmentRoute) GetDepartmentMemberships(c echo.Context) error 
 		return c.JSON(cerr.Code(), cerr)
 	}
 
-	memberships, apierr := d.DepartmentService.GetDepartmentMemberships(user)
+	departmentUsers, apierr := d.DepartmentService.GetDepartmentMemberships(user)
 	if apierr != nil {
 		return c.JSON(apierr.Code(), apierr)
 	}
-	return c.JSON(http.StatusOK, echo.Map{"memberships": memberships})
+	return c.JSON(http.StatusOK, departmentUsers)
 }
 
 func (d *DefaultDepartmentRoute) CreateDepartment(c echo.Context) error {

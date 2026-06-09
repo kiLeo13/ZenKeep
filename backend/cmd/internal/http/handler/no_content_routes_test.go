@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
@@ -62,8 +63,13 @@ func (s noContentDepartmentService) GetDepartments(*entity.User) ([]*contract.De
 	panic("not implemented")
 }
 
-func (s noContentDepartmentService) GetDepartmentMemberships(*entity.User) ([]*contract.DepartmentMembershipResponse, apierror.ErrorResponse) {
-	panic("not implemented")
+func (s noContentDepartmentService) GetDepartmentMemberships(*entity.User) (*contract.DepartmentUsersResponse, apierror.ErrorResponse) {
+	return &contract.DepartmentUsersResponse{
+		Departments: map[string][]string{
+			"1": []string{"10", "11"},
+			"2": []string{"12"},
+		},
+	}, nil
 }
 
 func (s noContentDepartmentService) CreateDepartment(*entity.User, *contract.CreateDepartmentRequest, *multipart.FileHeader) (*contract.DepartmentResponse, apierror.ErrorResponse) {
@@ -218,6 +224,28 @@ func TestNoContentDepartmentRoutesReturn204(t *testing.T) {
 			}
 			assertNoContent(t, rec)
 		})
+	}
+}
+
+func TestGetDepartmentMembershipsReturnsGroupedResponse(t *testing.T) {
+	e := echo.New()
+	route := NewDepartmentDefault(noContentDepartmentService{})
+	c, rec := newJSONContext(e, http.MethodGet, "/api/departments/users", "")
+	c.Set("user", &entity.User{ID: 1})
+
+	if err := route.GetDepartmentMemberships(c); err != nil {
+		t.Fatalf("handler returned error: %v", err)
+	}
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status %d, got %d", http.StatusOK, rec.Code)
+	}
+
+	var resp contract.DepartmentUsersResponse
+	if err := json.Unmarshal(rec.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if got := resp.Departments["1"]; len(got) != 2 || got[0] != "10" || got[1] != "11" {
+		t.Fatalf("expected department 1 users [10 11], got %v", got)
 	}
 }
 

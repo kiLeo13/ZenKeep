@@ -46,6 +46,48 @@ func TestDepartmentMembershipMutationRequiresManageDepartmentsAndManageUsers(t *
 	}
 }
 
+func TestGetDepartmentMembershipsGroupsUsersByDepartment(t *testing.T) {
+	db := newTestDB(t)
+	departmentSvc, repos := newDepartmentTestService(t, db)
+	actor := mustSaveDepartmentUser(
+		t,
+		repos.userRepo,
+		1,
+		entity.PermissionManageDepartments.Add(entity.PermissionManageUsers),
+	)
+	userA := mustSaveDepartmentUser(t, repos.userRepo, 2, 0)
+	userB := mustSaveDepartmentUser(t, repos.userRepo, 3, 0)
+	departmentA := mustSaveDepartment(t, repos.departmentRepo, 10, "Support")
+	departmentB := mustSaveDepartment(t, repos.departmentRepo, 11, "Billing")
+	mustAddMembership(t, repos.departmentRepo, departmentA.ID, userB.ID)
+	mustAddMembership(t, repos.departmentRepo, departmentA.ID, userA.ID)
+	mustAddMembership(t, repos.departmentRepo, departmentB.ID, userA.ID)
+
+	resp, apierr := departmentSvc.GetDepartmentMemberships(actor)
+	if apierr != nil {
+		t.Fatalf("list department memberships: %#v", apierr)
+	}
+
+	expected := map[string][]string{
+		idgen.Format(departmentA.ID): []string{idgen.Format(userA.ID), idgen.Format(userB.ID)},
+		idgen.Format(departmentB.ID): []string{idgen.Format(userA.ID)},
+	}
+	if len(resp.Departments) != len(expected) {
+		t.Fatalf("expected %d department groups, got %d", len(expected), len(resp.Departments))
+	}
+	for departmentID, userIDs := range expected {
+		got := resp.Departments[departmentID]
+		if len(got) != len(userIDs) {
+			t.Fatalf("expected department %s users %v, got %v", departmentID, userIDs, got)
+		}
+		for i, userID := range userIDs {
+			if got[i] != userID {
+				t.Fatalf("expected department %s users %v, got %v", departmentID, userIDs, got)
+			}
+		}
+	}
+}
+
 func TestCreateDepartmentAllowsTextOnlyIconAndStoresColor(t *testing.T) {
 	db := newTestDB(t)
 	departmentSvc, repos := newDepartmentTestService(t, db)

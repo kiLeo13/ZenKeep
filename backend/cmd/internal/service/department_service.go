@@ -95,7 +95,7 @@ func (s *DepartmentService) GetDepartments(actor *entity.User) ([]*contract.Depa
 	return resp, nil
 }
 
-func (s *DepartmentService) GetDepartmentMemberships(actor *entity.User) ([]*contract.DepartmentMembershipResponse, apierror.ErrorResponse) {
+func (s *DepartmentService) GetDepartmentMemberships(actor *entity.User) (*contract.DepartmentUsersResponse, apierror.ErrorResponse) {
 	if apierr := requireAllPermissions(actor, entity.PermissionManageDepartments, entity.PermissionManageUsers); apierr != nil {
 		return nil, apierr
 	}
@@ -106,9 +106,15 @@ func (s *DepartmentService) GetDepartmentMemberships(actor *entity.User) ([]*con
 		return nil, apierror.InternalServerError
 	}
 
-	resp := make([]*contract.DepartmentMembershipResponse, len(memberships))
-	for i, membership := range memberships {
-		resp[i] = toDepartmentMembershipResponse(membership)
+	resp := &contract.DepartmentUsersResponse{
+		Departments: make(map[string][]string),
+	}
+	for _, membership := range memberships {
+		departmentID := idgen.Format(membership.DepartmentID)
+		resp.Departments[departmentID] = append(
+			resp.Departments[departmentID],
+			idgen.Format(membership.UserID),
+		)
 	}
 	return resp, nil
 }
@@ -630,13 +636,6 @@ func departmentIDs(departments []*entity.Department) []int64 {
 		ids[i] = department.ID
 	}
 	return ids
-}
-
-func toDepartmentMembershipResponse(membership *entity.DepartmentMembership) *contract.DepartmentMembershipResponse {
-	return &contract.DepartmentMembershipResponse{
-		DepartmentID: idgen.Format(membership.DepartmentID),
-		UserID:       idgen.Format(membership.UserID),
-	}
 }
 
 func buildDepartmentCreateAuditChanges(department *entity.Department) []*entity.AuditLogChange {

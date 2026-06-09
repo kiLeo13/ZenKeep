@@ -15,9 +15,8 @@ type DepartmentResponse struct {
 	UpdatedAt string  `json:"updated_at"`
 }
 
-type DepartmentMembershipResponse struct {
-	DepartmentID string `json:"department_id"`
-	UserID       string `json:"user_id"`
+type DepartmentUsersResponse struct {
+	Departments map[string][]string `json:"departments"`
 }
 
 type CreateDepartmentRequest struct {
