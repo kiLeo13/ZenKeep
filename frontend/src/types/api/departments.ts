@@ -34,23 +34,18 @@ export const departmentSchema = z.object({
   updated_at: z.string()
 })
 
-export const departmentMembershipSchema = z.object({
-  department_id: z.string(),
-  user_id: z.string()
-})
+export const departmentUsersSchema = z.record(z.string(), z.array(z.string()))
 
 export const listDepartmentsResponseSchema = z.object({
   departments: z.array(departmentSchema)
 })
 
 export const listDepartmentMembershipsResponseSchema = z.object({
-  memberships: z.array(departmentMembershipSchema)
+  departments: departmentUsersSchema
 })
 
 export type DepartmentData = z.infer<typeof departmentSchema>
-export type DepartmentMembershipData = z.infer<
-  typeof departmentMembershipSchema
->
+export type DepartmentUsersData = z.infer<typeof departmentUsersSchema>
 export type ListDepartmentsResponseData = z.infer<
   typeof listDepartmentsResponseSchema
 >
