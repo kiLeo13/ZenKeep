@@ -16,7 +16,7 @@
   user-select: none;
   line-height: 140%;
   z-index: 2;
-  transition: background-color 300ms;
+  transition: background-color 100ms;
   animation: insideoutNotes 100ms ease-in-out forwards;
 }
 

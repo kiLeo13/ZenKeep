@@ -101,7 +101,7 @@ export function SidebarNote({ note, onClick }: SidebarNoteProps): JSX.Element {
       ref={elementRef}
     >
       <span className={styles.noteItemTitle}>{note.name}</span>
-      <Ripple duration={600} />
+      <Ripple duration={600} color="#d8baff0f" />
 
       <ActionMenu items={noteOpts} side="right" align="center">
         <AppTooltip label={t("sidebar.notes.options")}>
