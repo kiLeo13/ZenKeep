@@ -1,6 +1,6 @@
 import type {
   DepartmentData,
-  DepartmentMembershipData,
+  DepartmentUsersData,
   ListDepartmentMembershipsResponseData,
   ListDepartmentsResponseData
 } from "@/types/api/departments"
@@ -13,7 +13,7 @@ export type DepartmentsStoreState = "NONE" | "LOADING" | "READY" | "ERROR"
 
 type DepartmentsState = {
   departments: DepartmentData[]
-  memberships: DepartmentMembershipData[]
+  memberships: DepartmentUsersData
   state: DepartmentsStoreState
   membershipState: DepartmentsStoreState
   _fetchPromise: Promise<ApiResponse<ListDepartmentsResponseData> | void> | null
@@ -33,14 +33,14 @@ type DepartmentsState = {
   removeDepartment: (departmentId: string) => void
   getDepartmentById: (departmentId: string | null | undefined) => DepartmentData | null
 
-  addMembership: (membership: DepartmentMembershipData) => void
+  addMembership: (departmentId: string, userId: string) => void
   removeMembership: (departmentId: string, userId: string) => void
-  setMemberships: (memberships: DepartmentMembershipData[]) => void
+  setMemberships: (memberships: DepartmentUsersData) => void
 }
 
 export const useDepartmentsStore = create<DepartmentsState>((set, get) => ({
   departments: [],
-  memberships: [],
+  memberships: {},
   state: "NONE",
   membershipState: "NONE",
   _fetchPromise: null,
@@ -75,7 +75,7 @@ export const useDepartmentsStore = create<DepartmentsState>((set, get) => ({
       set({ membershipState: "LOADING" })
       const resp = await departmentService.listMemberships()
       if (resp.success) {
-        set({ memberships: resp.data.memberships, membershipState: "READY" })
+        set({ memberships: resp.data.departments, membershipState: "READY" })
       } else {
         set({ membershipState: "ERROR" })
       }
@@ -110,7 +110,7 @@ export const useDepartmentsStore = create<DepartmentsState>((set, get) => ({
     try {
       const resp = await departmentService.listMemberships()
       if (resp.success) {
-        set({ memberships: resp.data.memberships, membershipState: "READY" })
+        set({ memberships: resp.data.departments, membershipState: "READY" })
         return
       }
       set({ membershipState: "ERROR" })
@@ -141,9 +141,7 @@ export const useDepartmentsStore = create<DepartmentsState>((set, get) => ({
   removeDepartment(departmentId) {
     set((state) => ({
       departments: state.departments.filter((item) => item.id !== departmentId),
-      memberships: state.memberships.filter(
-        (item) => item.department_id !== departmentId
-      )
+      memberships: withoutDepartmentMemberships(state.memberships, departmentId)
     }))
   },
 
@@ -152,24 +150,22 @@ export const useDepartmentsStore = create<DepartmentsState>((set, get) => ({
     return get().departments.find((item) => item.id === departmentId) || null
   },
 
-  addMembership(membership) {
+  addMembership(departmentId, userId) {
     set((state) => {
-      const exists = state.memberships.some(
-        (item) =>
-          item.department_id === membership.department_id &&
-          item.user_id === membership.user_id
-      )
-      if (exists) return state
-      return { memberships: [...state.memberships, membership] }
+      const userIds = state.memberships[departmentId] ?? []
+      if (userIds.includes(userId)) return state
+      return {
+        memberships: {
+          ...state.memberships,
+          [departmentId]: [...userIds, userId]
+        }
+      }
     })
   },
 
   removeMembership(departmentId, userId) {
     set((state) => ({
-      memberships: state.memberships.filter(
-        (item) =>
-          item.department_id !== departmentId || item.user_id !== userId
-      )
+      memberships: withoutUserMembership(state.memberships, departmentId, userId)
     }))
   },
 
@@ -177,3 +173,31 @@ export const useDepartmentsStore = create<DepartmentsState>((set, get) => ({
     set({ memberships })
   }
 }))
+
+function withoutDepartmentMemberships(
+  memberships: DepartmentUsersData,
+  departmentId: string
+): DepartmentUsersData {
+  const remaining = { ...memberships }
+  delete remaining[departmentId]
+  return remaining
+}
+
+function withoutUserMembership(
+  memberships: DepartmentUsersData,
+  departmentId: string,
+  userId: string
+): DepartmentUsersData {
+  const userIds = memberships[departmentId]
+  if (!userIds) return memberships
+
+  const remainingUserIds = userIds.filter((item) => item !== userId)
+  if (remainingUserIds.length === 0) {
+    return withoutDepartmentMemberships(memberships, departmentId)
+  }
+
+  return {
+    ...memberships,
+    [departmentId]: remainingUserIds
+  }
+}
