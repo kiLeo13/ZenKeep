@@ -98,10 +98,10 @@ That sequence usually gives enough context without spelunking the whole repo lik
   - Opens/closes notes.
   - Initializes websocket manager.
   - Loads current user.
-  - Renders the resizable notes sidebar + content board layout.
+  - Renders the optional leftmost user management panel, the resizable notes sidebar, and the content board layout.
 - `frontend/src/components/DarkWrapper.tsx`: shared Radix dialog wrapper for modal overlay, focus trap, and modal open/close animation presets.
 - `frontend/src/components/sidebar/Sidebar.tsx`: note search, note list, and sidebar data wiring. Local sidebar child components own their matching CSS modules; shared grouping/move helpers live in `Sidebar.helpers.ts`, and keyboard/drag state lives in `useSidebarInteractions.ts`.
-- `frontend/src/components/sidebar/SidebarRail.tsx`: fixed left utility rail for note creation, utility modals, user management, and settings. Heavy modal bodies are loaded on demand.
+- `frontend/src/components/sidebar/SidebarRail.tsx`: fixed left utility rail for note creation, user-management panel toggling, utility modals, and settings. Heavy modal bodies and the user-management panel are loaded on demand.
 - `frontend/src/components/board/ContentBoard.tsx`: dispatches note rendering by note type/file extension. Renderer frames are loaded on demand.
 - `frontend/src/utils/createAsyncComponent.tsx`: shared `import()`-based async component helper for modal and renderer boundaries without `React.lazy`.
 
