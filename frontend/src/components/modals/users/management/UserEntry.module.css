@@ -4,10 +4,10 @@
   align-items: center;
   justify-content: space-between;
   border-radius: 5px;
-  padding: 10px;
+  padding: 6px 10px;
   box-sizing: border-box;
   width: 100%;
-  transition: background-color 150ms;
+  transition: background-color 80ms;
   animation: insideoutUsers 100ms ease-in-out forwards;
 }
 
@@ -34,7 +34,7 @@
 .presence {
   position: absolute;
   height: 8px;
-  width:  8px;
+  width: 8px;
   bottom: -1px;
   right: -1px;
   border-radius: 9999px;
@@ -106,6 +106,16 @@
   font-weight: 450;
   color: rgb(104, 95, 116);
 }
+
+/* External */
+.actions {
+  visibility: hidden;
+}
+
+.userRow:hover .actions {
+  visibility: visible;
+}
+/* End external */
 
 @keyframes insideoutUsers {
   from {

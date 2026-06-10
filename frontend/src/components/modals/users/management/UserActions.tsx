@@ -23,11 +23,15 @@ import styles from "./UserActions.module.css"
 
 type UserActionsProps = {
   user: UserResponseData
+  className: string
 }
 
 type ModalType = "NONE" | "SUSPEND" | "DELETE"
 
-export function UserActions({ user }: UserActionsProps): JSX.Element | null {
+export function UserActions({
+  user,
+  className
+}: UserActionsProps): JSX.Element | null {
   const { t } = useTranslation()
   const [activeModal, setActiveModal] = useState<ModalType>("NONE")
 
@@ -49,7 +53,7 @@ export function UserActions({ user }: UserActionsProps): JSX.Element | null {
     useRetainedModalValue(activeConfirmModal)
 
   return (
-    <div className={styles.userActions}>
+    <div className={clsx(styles.userActions, className)}>
       <DarkWrapper
         open={activeModal !== "NONE"}
         zIndex={50}

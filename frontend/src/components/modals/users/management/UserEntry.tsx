@@ -6,7 +6,6 @@ import clsx from "clsx"
 import { IoPerson } from "react-icons/io5"
 import { RiErrorWarningLine } from "react-icons/ri"
 import { UserActions } from "./UserActions"
-import { FaCheck } from "react-icons/fa6"
 import { EditableText } from "@/components/ui/inputs/EditableText"
 import { LoaderContainer } from "@/components/LoaderContainer"
 import { AppTooltip } from "@/components/ui/AppTooltip"
@@ -105,14 +104,8 @@ export function UserEntry({ user }: UserEntryProps): JSX.Element {
             )}
 
             {/* User Verification Status */}
-            <AppTooltip
-              label={
-                user.isVerified ? t("labels.verified") : t("labels.unverified")
-              }
-            >
-              {user.isVerified ? (
-                <FaCheck size={"0.7em"} color="#72c272" cursor="pointer" />
-              ) : (
+            <AppTooltip label={t("labels.unverified")}>
+              {!user.isVerified && (
                 <RiErrorWarningLine
                   size={"0.9em"}
                   color="#c2af72"
@@ -128,7 +121,9 @@ export function UserEntry({ user }: UserEntryProps): JSX.Element {
         </div>
       </div>
 
-      {shouldRenderActions && <UserActions user={user} />}
+      {shouldRenderActions && (
+        <UserActions user={user} className={styles.actions} />
+      )}
     </div>
   )
 }
