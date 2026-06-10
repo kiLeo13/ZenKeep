@@ -76,12 +76,6 @@ vi.mock("../DarkWrapper", () => ({
   }
 }))
 
-vi.mock("../modals/users/management/UserManagementPopover", () => ({
-  UserManagementPopover: ({ children }: { children: ReactNode }) => (
-    <>{children}</>
-  )
-}))
-
 vi.mock("../modals/departments/DepartmentManagementModal", () => ({
   DepartmentManagementModal: () => null
 }))
@@ -178,6 +172,30 @@ describe("SidebarRail", () => {
 
     expect(screen.getByRole("button", { name: "Calculadora" })).toBeInTheDocument()
     expect(screen.getByRole("button", { name: "ConfiguraÃ§Ãµes" })).toBeInTheDocument()
+  })
+
+  it("toggles the user management panel and exposes pressed state", () => {
+    const onToggleUserManagement = vi.fn()
+    grantedPermissions.add(Permission.ManageUsers)
+
+    render(
+      <SidebarRail
+        isUserManagementOpen
+        onToggleUserManagement={onToggleUserManagement}
+      />
+    )
+
+    const usersButton = screen.getByRole("button", { name: /Gerenciar/ })
+
+    expect(usersButton).toHaveAttribute("aria-pressed", "true")
+    expect(usersButton).toHaveAttribute(
+      "aria-controls",
+      "user-management-panel"
+    )
+
+    fireEvent.click(usersButton)
+
+    expect(onToggleUserManagement).toHaveBeenCalledTimes(1)
   })
 
   it("signs out from the settings menu, clears local tokens, and redirects to login", async () => {

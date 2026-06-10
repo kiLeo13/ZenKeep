@@ -23,7 +23,15 @@ import { useSidebarInteractions } from "./useSidebarInteractions"
 
 import styles from "./Sidebar.module.css"
 
-export function Sidebar(): JSX.Element {
+type SidebarProps = {
+  isUserManagementOpen?: boolean
+  onToggleUserManagement?: () => void
+}
+
+export function Sidebar({
+  isUserManagementOpen = false,
+  onToggleUserManagement
+}: SidebarProps): JSX.Element {
   const { t } = useTranslation()
   const navigate = useNavigate({ from: "/" })
 
@@ -104,7 +112,10 @@ export function Sidebar(): JSX.Element {
 
   return (
     <nav className={styles.sidebarLayout}>
-      <SidebarRail />
+      <SidebarRail
+        isUserManagementOpen={isUserManagementOpen}
+        onToggleUserManagement={onToggleUserManagement}
+      />
 
       <div className={styles.leftMenu}>
         <SidebarHeader

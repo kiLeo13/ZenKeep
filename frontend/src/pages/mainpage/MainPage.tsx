@@ -1,4 +1,4 @@
-import { useEffect, type JSX } from "react"
+import { useEffect, useState, type JSX } from "react"
 import { useNavigate } from "@tanstack/react-router"
 
 import {
@@ -19,13 +19,27 @@ import { useSessionStore } from "@/stores/useSessionStore"
 import { useTranslation } from "react-i18next"
 import { useWebSocketManager } from "@/hooks/useWebSocketManager"
 import { indexRouteApi } from "@/router/indexRouteApi"
+import { createAsyncComponent } from "@/utils/createAsyncComponent"
+import { useDelayedUnmount } from "@/hooks/useModalPresence"
+import { UserManagementPanelFallback } from "@/components/modals/users/management/UserManagementPanelFallback"
 
 import styles from "./MainPage.module.css"
+
+const UserManagementPanel = createAsyncComponent(
+  () => import("@/components/modals/users/management/UserManagementPanel"),
+  (module) => module.UserManagementPanel
+)
+const USER_MANAGEMENT_PANEL_ANIMATION_MS = 240
 
 export function MainPage(): JSX.Element {
   const { t } = useTranslation()
   const { id: activeNoteId } = indexRouteApi.useSearch()
   const navigate = useNavigate({ from: "/" })
+  const [isUserManagementOpen, setIsUserManagementOpen] = useState(false)
+  const shouldRenderUserManagement = useDelayedUnmount(
+    isUserManagementOpen,
+    USER_MANAGEMENT_PANEL_ANIMATION_MS
+  )
 
   const setUser = useSessionStore((s) => s.setUser)
   const shownNote = useNoteStore((s) => s.shownNote)
@@ -116,42 +130,62 @@ export function MainPage(): JSX.Element {
     <>
       <title>{`${t("app.title")} - Anotações`}</title>
 
-      <Group
-        orientation="horizontal"
-        className={styles.container}
-        defaultLayout={defaultLayout}
-        onLayoutChanged={onLayoutChanged}
-        resizeTargetMinimumSize={{ fine: 0, coarse: 0 }}
-        disableCursor
-      >
-        <Panel
-          defaultSize={300}
-          minSize={300}
-          maxSize={400}
-          className={styles.sidebarPanel}
+      <div className={styles.container}>
+        {shouldRenderUserManagement && (
+          <aside
+            id="user-management-panel"
+            className={styles.userManagementPanel}
+            data-state={isUserManagementOpen ? "open" : "closing"}
+            aria-hidden={!isUserManagementOpen}
+          >
+            <UserManagementPanel
+              loadingFallback={<UserManagementPanelFallback />}
+            />
+          </aside>
+        )}
+
+        <Group
+          orientation="horizontal"
+          className={styles.workspaceGroup}
+          defaultLayout={defaultLayout}
+          onLayoutChanged={onLayoutChanged}
+          resizeTargetMinimumSize={{ fine: 0, coarse: 0 }}
+          disableCursor
         >
-          <Sidebar />
-        </Panel>
+          <Panel
+            defaultSize={300}
+            minSize={300}
+            maxSize={400}
+            className={styles.sidebarPanel}
+          >
+            <Sidebar
+              isUserManagementOpen={isUserManagementOpen}
+              onToggleUserManagement={() =>
+                setIsUserManagementOpen((open) => !open)
+              }
+            />
+          </Panel>
 
-        <Separator className={styles.resizeHandle} />
+          <Separator className={styles.resizeHandle} />
 
-        <Panel minSize={30}>
-          <main className={styles.mainContent}>
-            {isFetchingNote ? (
-              <LoaderContainer />
-            ) : shownNote ? (
-              <ContentBoard note={shownNote} />
-            ) : (
-              <EmptyDisplay />
-            )}
+          <Panel minSize={30}>
+            <main className={styles.mainContent}>
+              {isFetchingNote ? (
+                <LoaderContainer />
+              ) : shownNote ? (
+                <ContentBoard note={shownNote} />
+              ) : (
+                <EmptyDisplay />
+              )}
 
-            {/* If we have the note data, but a media file is still rendering in the background */}
-            {!isFetchingNote && isRendering && !isVideoNote && (
-              <LoaderContainer />
-            )}
-          </main>
-        </Panel>
-      </Group>
+              {/* If we have the note data, but a media file is still rendering in the background */}
+              {!isFetchingNote && isRendering && !isVideoNote && (
+                <LoaderContainer />
+              )}
+            </main>
+          </Panel>
+        </Group>
+      </div>
     </>
   )
 }

@@ -15,7 +15,6 @@ import { DarkWrapper } from "../DarkWrapper"
 import { MdOutlineLogout } from "react-icons/md"
 import { MdOutlineHistory } from "react-icons/md"
 import { MdOutlineAccountTree } from "react-icons/md"
-import { UserManagementPopover } from "../modals/users/management/UserManagementPopover"
 import { CgController } from "react-icons/cg"
 import { AppTooltip } from "../ui/AppTooltip"
 import { BsBuildingFill } from "react-icons/bs"
@@ -31,6 +30,11 @@ import { userService } from "@/services/userService"
 import { toasts } from "@/utils/toastUtils"
 
 import styles from "./SidebarRail.module.css"
+
+type SidebarRailProps = {
+  isUserManagementOpen?: boolean
+  onToggleUserManagement?: () => void
+}
 
 const CreateEditorModal = createAsyncComponent(
   () => import("../modals/notes/creations/editors/CreateEditorModal"),
@@ -66,7 +70,10 @@ const modalLoaderFallback = (
   <LoaderContainer scale={0.9} loaderColor="#b79ed8" />
 )
 
-export function SidebarRail(): JSX.Element {
+export function SidebarRail({
+  isUserManagementOpen = false,
+  onToggleUserManagement
+}: SidebarRailProps): JSX.Element {
   const { t } = useTranslation()
   const navigate = useNavigate()
 
@@ -203,18 +210,21 @@ export function SidebarRail(): JSX.Element {
           )}
 
           {canManageUsers && (
-            <UserManagementPopover>
-              <AppTooltip label={t("tooltips.labels.usersMng")} side="right">
-                <button
-                  type="button"
-                  className={styles.button}
-                  aria-label={t("tooltips.labels.usersMng")}
-                >
-                  <FaUsers size={"0.8em"} />
-                  <Ripple />
-                </button>
-              </AppTooltip>
-            </UserManagementPopover>
+            <AppTooltip label={t("tooltips.labels.usersMng")} side="right">
+              <button
+                type="button"
+                className={`${styles.button} ${
+                  isUserManagementOpen ? styles.buttonActive : ""
+                }`}
+                aria-label={t("tooltips.labels.usersMng")}
+                aria-controls="user-management-panel"
+                aria-pressed={isUserManagementOpen}
+                onClick={onToggleUserManagement}
+              >
+                <FaUsers size={"0.8em"} />
+                <Ripple />
+              </button>
+            </AppTooltip>
           )}
 
           <AppTooltip label={t("tooltips.labels.algoCalc")} side="right">
