@@ -1,0 +1,84 @@
+.skeletonRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 50px;
+  border-radius: 6px;
+  padding: 6px 8px;
+  box-sizing: border-box;
+}
+
+.skeletonText {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.skeletonAvatar,
+.skeletonName,
+.skeletonMeta,
+.skeletonAction {
+  position: relative;
+  overflow: hidden;
+  background-color: rgba(154, 136, 177, 0.14);
+}
+
+.skeletonAvatar::after,
+.skeletonName::after,
+.skeletonMeta::after,
+.skeletonAction::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(229, 210, 249, 0.13),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: userPanelShade 1.35s ease-in-out infinite;
+}
+
+.skeletonAvatar {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border-radius: 9999px;
+}
+
+.skeletonName {
+  width: 62%;
+  height: 13px;
+  border-radius: 9999px;
+}
+
+.skeletonMeta {
+  width: 43%;
+  height: 10px;
+  border-radius: 9999px;
+}
+
+.skeletonAction {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border-radius: 9999px;
+}
+
+@keyframes userPanelShade {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeletonAvatar::after,
+  .skeletonName::after,
+  .skeletonMeta::after,
+  .skeletonAction::after {
+    animation: none;
+  }
+}

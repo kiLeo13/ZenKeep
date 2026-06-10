@@ -1,0 +1,72 @@
+.fallback {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  height: 100%;
+  padding: 16px 14px;
+  box-sizing: border-box;
+}
+
+.header {
+  display: grid;
+  gap: 12px;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  overflow: hidden;
+}
+
+.title,
+.search {
+  position: relative;
+  overflow: hidden;
+  background-color: rgba(154, 136, 177, 0.14);
+}
+
+.title::after,
+.search::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(229, 210, 249, 0.13),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: userPanelFallbackShade 1.35s ease-in-out infinite;
+}
+
+.title {
+  width: 46%;
+  height: 22px;
+  border-radius: 5px;
+}
+
+.search {
+  width: 100%;
+  height: 34px;
+  border-radius: 6px;
+}
+
+.divider {
+  height: 1px;
+  margin: 14px 0 8px;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+@keyframes userPanelFallbackShade {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title::after,
+  .search::after {
+    animation: none;
+  }
+}

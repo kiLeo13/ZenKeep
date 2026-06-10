@@ -1,0 +1,121 @@
+.panel {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  height: 100%;
+  min-width: 0;
+  color: rgb(174, 166, 187);
+  background-color: rgb(24, 21, 31);
+}
+
+.header {
+  display: grid;
+  gap: 12px;
+  padding: 16px 14px 14px;
+}
+
+.title {
+  margin: 0;
+  color: rgb(179, 169, 194);
+  font-size: 1.05rem;
+  font-weight: 650;
+}
+
+.searchContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 9px;
+  color: rgb(141, 125, 165);
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  min-width: 0;
+  height: 34px;
+  padding: 0 10px 0 34px;
+  box-sizing: border-box;
+  border: 1px solid rgba(142, 118, 177, 0.22);
+  border-radius: 6px;
+  outline: none;
+  color: rgb(183, 176, 196);
+  background-color: rgba(16, 14, 21, 0.52);
+  font-size: 0.9rem;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.searchInput::placeholder {
+  color: rgb(105, 97, 118);
+}
+
+.searchInput:focus {
+  border-color: rgba(169, 139, 218, 0.62);
+  background-color: rgba(18, 15, 24, 0.86);
+}
+
+.division {
+  height: 1px;
+  margin: 0 14px;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.userList {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-height: 0;
+  padding: 8px 10px 14px;
+  overflow-y: auto;
+}
+
+.state {
+  display: flex;
+  flex: 1;
+  min-height: 180px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px;
+  text-align: center;
+}
+
+.stateText {
+  max-width: 28ch;
+  margin: 0;
+  color: rgb(143, 134, 156);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.retryButton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgba(169, 139, 218, 0.3);
+  border-radius: 6px;
+  color: rgb(210, 190, 236);
+  background-color: rgba(118, 96, 154, 0.16);
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.retryButton:hover,
+.retryButton:focus-visible {
+  border-color: rgba(186, 154, 231, 0.48);
+  color: rgb(234, 221, 249);
+  background-color: rgba(132, 108, 176, 0.24);
+  outline: none;
+}

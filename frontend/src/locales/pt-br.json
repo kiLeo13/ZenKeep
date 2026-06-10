@@ -359,7 +359,10 @@
       }
     },
     "usersMng": {
-      "title": "Usuários ({{val}})"
+      "title": "Usuários ({{val}})",
+      "empty": "Nenhum usuário encontrado.",
+      "loadError": "Não foi possível carregar a lista de usuários agora.",
+      "retry": "Tentar novamente"
     },
     "algoCalc": {
       "nodes": {
