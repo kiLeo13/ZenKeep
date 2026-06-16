@@ -1360,6 +1360,88 @@ export const apiResources: ApiResource[] = [
         ]
       }
     ]
+  },
+  {
+    id: "text-pdf",
+    name: "Text PDF",
+    objectName: "Text PDF Request",
+    description: [
+      "Represents the utility request used to convert typed text into a downloadable PDF."
+    ],
+    callouts: [
+      {
+        tone: "info",
+        text: [
+          "The generated file is returned directly as ",
+          { label: "application/pdf" },
+          " bytes with an attachment disposition. It is not stored in S3 and is not returned as Base64 JSON."
+        ]
+      }
+    ],
+    fields: [
+      {
+        name: "file_name",
+        type: "string",
+        description: [
+          "Requested download filename. The backend normalizes unsafe characters and ensures a ",
+          { label: ".pdf" },
+          " extension."
+        ]
+      },
+      {
+        name: "content",
+        type: "string",
+        description: ["Plain text content to render into the generated PDF."]
+      }
+    ],
+    routes: [
+      {
+        id: "generate-text-pdf",
+        method: "POST",
+        path: "/misc/text-pdf",
+        title: "Generate Text PDF",
+        auth: "Bearer JWT",
+        description: [
+          [
+            "Generates a PDF from plain text for immediate download. Requires the ",
+            { label: "Generate PDFs" },
+            " permission."
+          ]
+        ],
+        requestBody: [
+          {
+            name: "file_name",
+            type: "string",
+            description: ["Requested PDF filename, 1 to 120 characters."]
+          },
+          {
+            name: "content",
+            type: "string",
+            description: ["Plain text content, up to 1,000,000 characters."]
+          }
+        ],
+        responses: [
+          {
+            status: 200,
+            description: [
+              "Returns binary PDF bytes with ",
+              { label: "Content-Type: application/pdf" },
+              " and ",
+              { label: "Content-Disposition: attachment" },
+              "."
+            ]
+          },
+          {
+            status: 400,
+            description: ["Malformed body or validation failure."]
+          },
+          {
+            status: 403,
+            description: ["Requester cannot generate PDFs."]
+          }
+        ]
+      }
+    ]
   }
 ]
 

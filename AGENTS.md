@@ -101,7 +101,7 @@ That sequence usually gives enough context without spelunking the whole repo lik
   - Renders the optional leftmost user management panel, the resizable notes sidebar, and the content board layout.
 - `frontend/src/components/DarkWrapper.tsx`: shared Radix dialog wrapper for modal overlay, focus trap, and modal open/close animation presets.
 - `frontend/src/components/sidebar/Sidebar.tsx`: note search, note list, and sidebar data wiring. Local sidebar child components own their matching CSS modules; shared grouping/move helpers live in `Sidebar.helpers.ts`, and keyboard/drag state lives in `useSidebarInteractions.ts`.
-- `frontend/src/components/sidebar/SidebarRail.tsx`: fixed left utility rail for note creation, user-management panel toggling, utility modals, and settings. Heavy modal bodies and the user-management panel are loaded on demand.
+- `frontend/src/components/sidebar/SidebarRail.tsx`: fixed left utility rail for note creation, text-to-PDF generation, user-management panel toggling, utility modals, and settings. Heavy modal bodies and the user-management panel are loaded on demand.
 - `frontend/src/components/board/ContentBoard.tsx`: dispatches note rendering by note type/file extension. Renderer frames are loaded on demand.
 - `frontend/src/utils/createAsyncComponent.tsx`: shared `import()`-based async component helper for modal and renderer boundaries without `React.lazy`.
 
@@ -139,6 +139,9 @@ That sequence usually gives enough context without spelunking the whole repo lik
   - Audit log listing client.
   - Uses `limit` + `before_id` cursor pagination against `/audit-logs`.
   - Supports actor/action/subject filters used by the audit modal.
+- `frontend/src/services/miscService.ts`
+  - Miscellaneous utility client for CNPJ lookup and text-to-PDF generation.
+  - Text-to-PDF uses a blob response from `/misc/text-pdf`; keep JSON error parsing compatible with `responseType: "blob"`.
 - `frontend/src/services/userService.ts`
   - Auth and user management requests.
 - `frontend/src/services/i18n.ts`
@@ -252,6 +255,16 @@ Read:
 4. `frontend/src/types/api/audit.ts`
 5. `frontend/src/models/Permission.ts`
 
+### If The Task Is About Frontend Text-To-PDF
+
+Read:
+
+1. `frontend/src/components/sidebar/SidebarRail.tsx`
+2. `frontend/src/components/modals/global/pdf/TextPDFModal.tsx`
+3. `frontend/src/services/miscService.ts`
+4. `frontend/src/types/api/misc.ts`
+5. `frontend/src/models/Permission.ts`
+
 ### If The Task Is About Backend Auth Or User Resolution
 
 Read:
@@ -302,6 +315,16 @@ Read:
 4. `backend/cmd/internal/domain/entity/connection.go`
 5. `backend/infrastructure/aws/lambda/ws-connect-shim/index.mjs`
 
+### If The Task Is About Backend Text-To-PDF
+
+Read:
+
+1. `backend/cmd/internal/http/handler/misc_routes.go`
+2. `backend/cmd/internal/service/misc_service.go`
+3. `backend/cmd/internal/service/text_pdf.go`
+4. `backend/cmd/internal/contract/misc_contract.go`
+5. `backend/cmd/internal/domain/entity/permissions.go`
+
 ## Environment And Config
 
 ### Frontend
@@ -351,6 +374,7 @@ Do not copy environment values into docs or comments unless explicitly needed.
 - The audit modal resolves actor names from `useUsersStore` first and falls back to `userService.getUserById` for users that are no longer present in the active list.
 - Company lookup audit events are recorded for both hits and misses, with `found` and `cache_hit` change rows describing the outcome.
 - Company lookup misses are cached as `companies` rows with `found=false`; do not put a database default back on `Company.Found`, because GORM can omit false zero values and turn repeated misses into empty successful company responses.
+- Text-to-PDF generation is a direct binary download through `/misc/text-pdf`. It requires `PermissionGeneratePDFs`, returns `application/pdf` with an attachment disposition, and intentionally does not upload the generated PDF to S3 or return Base64 JSON.
 - Internal platform IDs are stored as numeric `int64` values in SQLite but serialized as decimal strings in API and websocket contracts. The frontend must keep these values as strings and never parse them to JavaScript numbers.
 - New platform IDs are generated through `backend/cmd/internal/idgen` using Sonyflake with a `2025-01-01T00:00:00Z` epoch. Audit log change IDs are local numeric rows, and CNPJs stay business identifiers rather than generated IDs.
 - `frontend/src/stores/useNotesStore.ts` treats `REFERENCE` notes differently from text notes.

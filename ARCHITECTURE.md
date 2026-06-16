@@ -59,6 +59,7 @@ Important frontend behavior:
 - User management row actions can edit a target user's department memberships through the same shared multi-select menu used by permissions. Permission edits remain deferred behind an explicit save action, while department membership toggles call the department membership endpoints immediately and reconcile the departments store after each successful transaction.
 - The department management modal is split into local department-specific components: `DepartmentSidebar`, `DepartmentActionsMenu`, `DepartmentDetailsForm`, `DepartmentMembersPanel`, `IconPicker`, and `DepartmentColorPicker`. Each component keeps its styles in a matching CSS module so modal orchestration stays separate from list, form, menu, member, icon picker, and color picker concerns. Main form field guidance is modeled through `ModalLabel` subtitles so labels and helper copy stay structurally consistent. The modal uses `note_count` to avoid rendering note bulk actions for empty departments and disables department deletion while notes still reference the department. The color picker presents reset and custom color as swatch-like boxes, with corner action icons and a centered checkmark only on the active choice.
 - Sidebar note rows expose menu actions for all users to copy the note ID and download the note without opening a new tab. Markdown notes download as `.md`, reference notes download the stored attachment file, and Mermaid flowcharts export through the shared Mermaid SVG renderer as `.svg`. Destructive note actions sit after routine actions in the menu, separated by a divider and styled through the shared danger action variant.
+- Users with the `Generate PDFs` permission can open a sidebar-rail utility modal that converts typed plain text into an immediate PDF download. The frontend posts `file_name` and `content` to the backend, receives `application/pdf` bytes, and downloads them with a local object URL.
 - Heavy optional UI is loaded on demand instead of from the permanent shell:
   - The user management panel is imported only after the rail toggle is opened.
   - Sidebar utility modals are imported only when opened.
@@ -259,6 +260,12 @@ The application sets `found=true` for successful Minha Receita responses and `fo
 Audit log reads are exposed through `GET /audit-logs`.
 That endpoint is protected by the dedicated `PermissionReadAuditLogs` bit and returns the newest entries first with `limit` and `before_id` pagination.
 
+Text-to-PDF generation is exposed through `POST /misc/text-pdf`.
+That endpoint is protected by the dedicated `PermissionGeneratePDFs` bit and
+returns binary `application/pdf` bytes with `Content-Disposition: attachment`.
+Generated PDFs are not uploaded to S3 and are not encoded into JSON; callers
+download the returned bytes directly.
+
 ## Frontend/Backend Integration
 
 The SPA talks to the Go API over HTTP and uses websocket connectivity for realtime updates.
@@ -268,6 +275,7 @@ That creates a few important cross-project seams:
 - note contracts must stay aligned between frontend `types/` and backend `contract/` plus service behavior
 - department contracts must stay aligned between frontend `types/` and backend `contract/`; this includes department objects, `icon_type`, nullable `color_rgba`, `note_count`, the `/departments/users` department-to-user-ID map, note `department_id`, and department websocket event payloads
 - audit log contracts and permission bit offsets must stay aligned between frontend `types/models` and backend `contract/entity` layers
+- text-to-PDF generation depends on both frontend `miscService.generateTextPDF` blob handling and backend `/misc/text-pdf` binary response headers
 - websocket event shapes must stay aligned between backend event emitters and frontend event schemas
 - file and reference note handling depends on both backend storage behavior and frontend renderer support
 - websocket reconnect semantics span both sides: the frontend must reconnect with the same `session_id`, and the backend must replace old transports for that session instead of stacking rows
