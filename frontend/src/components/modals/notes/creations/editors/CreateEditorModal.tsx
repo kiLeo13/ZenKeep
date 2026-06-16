@@ -110,9 +110,7 @@ export function CreateEditorModal({
                   input={<ModalTextInput name="name" autoComplete="off" />}
                 />
                 <ModalSection
-                  label={
-                    <ModalLabel title={t("departments.label")} required />
-                  }
+                  label={<ModalLabel title={t("departments.label")} required />}
                   input={
                     <ModalSelectInput
                       name="department_id"
