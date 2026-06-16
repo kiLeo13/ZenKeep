@@ -205,6 +205,10 @@
     "manageDepartments": {
       "name": "Gerenciar Departamentos",
       "desc": "Permite criar, editar, excluir departamentos e mover notas. Para alterar membros do departamento, também requer \"Gerenciar Usuários\"."
+    },
+    "generatePdfs": {
+      "name": "Gerar PDFs",
+      "desc": "Permite converter texto digitado em um arquivo PDF para download."
     }
   },
   "modals": {
@@ -308,6 +312,19 @@
     "lookup": {
       "title": "Consultar Pessoa Jurídica",
       "headerLabel": "Informe o CNPJ"
+    },
+    "textPdf": {
+      "title": "Gerar PDF",
+      "subtitle": "Digite um texto, escolha um nome de arquivo e baixe o PDF gerado.",
+      "fileName": "Nome do arquivo",
+      "fileNamePlaceholder": "relatorio",
+      "content": "Conteúdo",
+      "contentPlaceholder": "Digite o texto do PDF...",
+      "contentHint": "Quebras de linha serão mantidas no PDF.",
+      "download": "Baixar PDF",
+      "toasts": {
+        "error": "Não foi possivel gerar o PDF."
+      }
     },
     "verify": {
       "title": "Verificação de E-mail",
@@ -496,6 +513,7 @@
       "usersMng": "Gerenciar Usuários",
       "createNote": "Criar Nota",
       "companyLookup": "Consultar CNPJ",
+      "textPdf": "Gerar PDF",
       "departments": "Gerenciar Departamentos",
       "settings": "Configurações",
       "anchorSection": "Link para Seção"

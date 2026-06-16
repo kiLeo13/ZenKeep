@@ -1,0 +1,208 @@
+.container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(720px, 92vw);
+  max-height: 90vh;
+  padding: 28px;
+  gap: 22px;
+  box-sizing: border-box;
+  border: 1px solid rgb(52, 45, 64);
+  border-radius: 12px;
+  background-color: rgb(30, 25, 37);
+  color: rgb(184, 178, 190);
+  box-shadow: 0 24px 70px rgba(7, 5, 12, 0.34);
+}
+
+.close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background-color: transparent;
+  color: rgb(129, 112, 148);
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.close:hover,
+.close:focus-visible {
+  border-color: rgb(68, 57, 83);
+  background-color: rgb(42, 35, 52);
+  color: rgb(198, 185, 214);
+  outline: none;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-right: 32px;
+  user-select: none;
+}
+
+.titleIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  border-radius: 10px;
+  background-color: rgba(132, 105, 176, 0.16);
+  color: rgb(178, 151, 218);
+}
+
+.titleCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  color: rgb(207, 201, 214);
+  font-size: 1.35rem;
+  font-weight: 650;
+  letter-spacing: 0;
+}
+
+.subtitle {
+  max-width: 62ch;
+  margin: 0;
+  color: rgb(141, 134, 150);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.textAreaWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+}
+
+.textArea {
+  width: 100%;
+  min-height: 260px;
+  max-height: 44vh;
+  padding: 12px;
+  resize: vertical;
+  box-sizing: border-box;
+  border: 1px solid rgb(50, 42, 70);
+  border-radius: 8px;
+  outline: none;
+  background-color: rgba(0, 0, 0, 0.2);
+  color: rgb(185, 180, 191);
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  transition:
+    border-color 180ms ease,
+    outline-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.textArea:focus {
+  border-color: rgb(92, 71, 145);
+}
+
+.textArea.invalid {
+  outline: 2px solid rgb(238, 54, 54);
+  background-color: rgba(238, 54, 54, 0.05);
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: rgb(128, 119, 139);
+  font-size: 0.78rem;
+}
+
+.errorMessage {
+  color: rgb(238, 86, 86);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.secondaryButton,
+.primaryButton {
+  min-height: 38px;
+  padding: 0 16px;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.secondaryButton {
+  border: 1px solid rgb(62, 53, 75);
+  background-color: transparent;
+  color: rgb(175, 164, 188);
+}
+
+.secondaryButton:hover:not(:disabled) {
+  background-color: rgb(42, 35, 52);
+}
+
+.primaryButton {
+  background-color: rgb(118, 89, 174);
+  color: rgb(243, 238, 249);
+}
+
+.primaryButton:hover:not(:disabled) {
+  background-color: rgb(136, 105, 196);
+}
+
+.primaryButton:disabled,
+.secondaryButton:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 24px 18px 18px;
+  }
+
+  .header {
+    align-items: flex-start;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  .secondaryButton,
+  .primaryButton {
+    width: 100%;
+  }
+}

@@ -15,6 +15,7 @@ import { DarkWrapper } from "../DarkWrapper"
 import { MdOutlineLogout } from "react-icons/md"
 import { MdOutlineHistory } from "react-icons/md"
 import { MdOutlineAccountTree } from "react-icons/md"
+import { MdPictureAsPdf } from "react-icons/md"
 import { CgController } from "react-icons/cg"
 import { AppTooltip } from "../ui/AppTooltip"
 import { BsBuildingFill } from "react-icons/bs"
@@ -66,6 +67,11 @@ const CompanyLookupModal = createAsyncComponent(
   (module) => module.CompanyLookupModal
 )
 
+const TextPDFModal = createAsyncComponent(
+  () => import("../modals/global/pdf/TextPDFModal"),
+  (module) => module.TextPDFModal
+)
+
 const modalLoaderFallback = (
   <LoaderContainer scale={0.9} loaderColor="#b79ed8" />
 )
@@ -82,6 +88,7 @@ export function SidebarRail({
   const canLookup = usePermission(Permission.PerformLookup)
   const canReadAuditLogs = usePermission(Permission.ReadAuditLogs)
   const canManageDepartments = usePermission(Permission.ManageDepartments)
+  const canGeneratePDFs = usePermission(Permission.GeneratePDFs)
 
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [editorMode, setEditorMode] = useState<EditorMode | null>(null)
@@ -89,6 +96,7 @@ export function SidebarRail({
   const [showAuditLogs, setShowAuditLogs] = useState(false)
   const [showDepartments, setShowDepartments] = useState(false)
   const [lookingUp, setLookingUp] = useState(false)
+  const [showTextPDF, setShowTextPDF] = useState(false)
 
   const closeEditor = () => setEditorMode(null)
   const { renderedValue: renderedEditorMode } =
@@ -192,6 +200,17 @@ export function SidebarRail({
         />
       </DarkWrapper>
 
+      <DarkWrapper
+        open={showTextPDF}
+        onOpenChange={setShowTextPDF}
+        animationPreset="slide-up"
+      >
+        <TextPDFModal
+          loadingFallback={modalLoaderFallback}
+          onClose={() => setShowTextPDF(false)}
+        />
+      </DarkWrapper>
+
       <aside className={styles.rail}>
         <div className={styles.topActions}>
           {canCreate && (
@@ -238,6 +257,20 @@ export function SidebarRail({
               <Ripple />
             </button>
           </AppTooltip>
+
+          {canGeneratePDFs && (
+            <AppTooltip label={t("tooltips.labels.textPdf")} side="right">
+              <button
+                type="button"
+                className={styles.button}
+                aria-label={t("tooltips.labels.textPdf")}
+                onClick={() => setShowTextPDF(true)}
+              >
+                <MdPictureAsPdf size={"0.9em"} />
+                <Ripple />
+              </button>
+            </AppTooltip>
+          )}
 
           {canLookup && (
             <AppTooltip label={t("tooltips.labels.companyLookup")} side="right">

@@ -20,6 +20,7 @@ export class Permission {
   static readonly PerformLookup = new Permission(9, "perms.lookup")
   static readonly ReadAuditLogs = new Permission(10, "perms.readAuditLogs")
   static readonly ManageDepartments = new Permission(11, "perms.manageDepartments")
+  static readonly GeneratePDFs = new Permission(12, "perms.generatePdfs")
 
   static get all(): Permission[] {
     return [
@@ -33,7 +34,8 @@ export class Permission {
       Permission.PunishUsers,
       Permission.PerformLookup,
       Permission.ReadAuditLogs,
-      Permission.ManageDepartments
+      Permission.ManageDepartments,
+      Permission.GeneratePDFs
     ]
   }
 

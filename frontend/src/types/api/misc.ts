@@ -1,5 +1,10 @@
 import { z } from "zod"
 
+export type GenerateTextPDFRequest = {
+  fileName: string
+  content: string
+}
+
 // --------------------------------------------------
 // API Responses
 // --------------------------------------------------
