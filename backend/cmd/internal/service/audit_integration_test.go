@@ -237,7 +237,7 @@ func TestGetCompanyByCNPJCreatesAuditEvent(t *testing.T) {
 			CNPJ:      "12345678000195",
 			LegalName: "Magalu Teste",
 		},
-	}, companyRepo, auditSvc, &sequenceAuditIDGenerator{next: 9000})
+	}, companyRepo, auditSvc, &sequenceAuditIDGenerator{next: 9000}, newTestValidator())
 
 	actor := &entity.User{
 		ID:          99,
@@ -287,7 +287,7 @@ func TestGetCompanyByCNPJNotFoundStillCreatesAuditEvent(t *testing.T) {
 	userRepo := repository.NewUserRepository(db)
 	miscSvc := NewMiscService(&fakeLookupClient{
 		err: minhareceita.ErrNotFound,
-	}, companyRepo, auditSvc, &sequenceAuditIDGenerator{next: 9000})
+	}, companyRepo, auditSvc, &sequenceAuditIDGenerator{next: 9000}, newTestValidator())
 
 	actor := &entity.User{
 		ID:          100,
@@ -351,7 +351,7 @@ func TestGetCompanyByCNPJNotFoundCacheReturnsNotFoundAgain(t *testing.T) {
 	companyRepo := repository.NewCompanyRepository(db)
 	userRepo := repository.NewUserRepository(db)
 	lookupClient := &fakeLookupClient{err: minhareceita.ErrNotFound}
-	miscSvc := NewMiscService(lookupClient, companyRepo, auditSvc, &sequenceAuditIDGenerator{next: 9000})
+	miscSvc := NewMiscService(lookupClient, companyRepo, auditSvc, &sequenceAuditIDGenerator{next: 9000}, newTestValidator())
 
 	actor := &entity.User{
 		ID:          101,

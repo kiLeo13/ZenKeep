@@ -1,5 +1,20 @@
 package contract
 
+const (
+	MaxTextPDFFileNameLength = 120
+	MaxTextPDFContentLength  = 1000000
+)
+
+type GenerateTextPDFRequest struct {
+	FileName string `json:"file_name" validate:"required,min=1,max=120"`
+	Content  string `json:"content" validate:"required,max=1000000"`
+}
+
+type GeneratedPDF struct {
+	FileName string
+	Bytes    []byte
+}
+
 type CompanyResponse struct {
 	CNPJ              string                    `json:"cnpj"`
 	LegalName         string                    `json:"legal_name"`

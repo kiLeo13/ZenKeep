@@ -10,6 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/apigatewaymanagementapi v1.29.10
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.97.3
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.64.2
+	github.com/go-pdf/fpdf v0.9.0
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.13.4

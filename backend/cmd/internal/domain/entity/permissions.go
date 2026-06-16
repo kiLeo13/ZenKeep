@@ -53,6 +53,9 @@ const (
 	// PermissionManageDepartments allows managing departments and department
 	// note organization. Membership changes also require PermissionManageUsers.
 	PermissionManageDepartments
+
+	// PermissionGeneratePDFs allows generating downloadable PDF files from text.
+	PermissionGeneratePDFs
 )
 
 // Has checks if the permission bitmask contains ALL bits

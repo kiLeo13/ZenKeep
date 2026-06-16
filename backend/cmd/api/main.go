@@ -103,7 +103,7 @@ func main() {
 	userService := service.NewUserService(db, userRepo, validate, connService, cogClient, auditService, userPolicy, idGenerator)
 	noteService := service.NewNoteService(db, noteRepo, departmentRepo, userRepo, connService, s3Client, validate, auditService, notePolicy, idGenerator)
 	departmentService := service.NewDepartmentService(db, departmentRepo, noteRepo, userRepo, connService, s3Client, validate, auditService, idGenerator)
-	miscService := service.NewMiscService(receitaClient, compRepo, auditService, idGenerator)
+	miscService := service.NewMiscService(receitaClient, compRepo, auditService, idGenerator, validate)
 
 	connRoutes := handler.NewWSDefault(connService)
 	noteRoutes := handler.NewNoteDefault(noteService)
@@ -196,6 +196,7 @@ func registerRoutes(
 
 	// Misc
 	protected.GET("/misc/cnpj/:cnpj", miscH.GetCompany)
+	protected.POST("/misc/text-pdf", miscH.GenerateTextPDF)
 	protected.GET("/audit-logs", auditH.GetAuditLogs)
 
 	// --- WebSocket ---

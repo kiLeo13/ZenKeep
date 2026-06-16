@@ -3,8 +3,10 @@ package service
 import (
 	"context"
 	"errors"
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/gommon/log"
 	"strconv"
+	"strings"
 	"zenkeep/cmd/internal/contract"
 	"zenkeep/cmd/internal/domain/entity"
 	"zenkeep/cmd/internal/idgen"
@@ -27,6 +29,7 @@ type MiscService struct {
 	CompanyRepo   CompanyRepository
 	AuditService  *AuditService
 	IDGen         idgen.Generator
+	Validate      *validator.Validate
 }
 
 type companyLookupResult struct {
@@ -35,13 +38,45 @@ type companyLookupResult struct {
 	fromCache bool
 }
 
-func NewMiscService(client CompanyLookupClient, companyRepo CompanyRepository, auditService *AuditService, idGenerator idgen.Generator) *MiscService {
+func NewMiscService(client CompanyLookupClient, companyRepo CompanyRepository, auditService *AuditService, idGenerator idgen.Generator, validate *validator.Validate) *MiscService {
+	if validate == nil {
+		validate = validator.New()
+	}
+
 	return &MiscService{
 		ReceitaClient: client,
 		CompanyRepo:   companyRepo,
 		AuditService:  auditService,
 		IDGen:         idGenerator,
+		Validate:      validate,
 	}
+}
+
+func (u *MiscService) GenerateTextPDF(actor *entity.User, req *contract.GenerateTextPDFRequest) (*contract.GeneratedPDF, apierror.ErrorResponse) {
+	if !actor.Permissions.HasEffective(entity.PermissionGeneratePDFs) {
+		return nil, apierror.NewPermissionError(int64(entity.PermissionGeneratePDFs))
+	}
+
+	if req == nil {
+		return nil, apierror.MalformedBodyError
+	}
+
+	req.FileName = strings.TrimSpace(req.FileName)
+	if valerr := u.Validate.Struct(req); valerr != nil {
+		return nil, apierror.FromValidationError(valerr)
+	}
+
+	fileName := normalizePDFFileName(req.FileName)
+	pdfBytes, err := buildTextPDF(fileName, req.Content)
+	if err != nil {
+		log.Errorf("failed to generate text pdf: %v", err)
+		return nil, apierror.InternalServerError
+	}
+
+	return &contract.GeneratedPDF{
+		FileName: fileName,
+		Bytes:    pdfBytes,
+	}, nil
 }
 
 func (u *MiscService) GetCompanyByCNPJ(actor *entity.User, cnpj string) (*contract.CompanyResponse, apierror.ErrorResponse) {
