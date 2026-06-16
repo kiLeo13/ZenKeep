@@ -20,6 +20,7 @@ vi.mock("react-i18next", () => ({
         "tooltips.labels.usersMng": "Gerenciar usuÃ¡rios",
         "tooltips.labels.algoCalc": "Calculadora",
         "tooltips.labels.companyLookup": "Consultar empresa",
+        "tooltips.labels.textPdf": "Gerar PDF",
         "tooltips.labels.auditLogs": "Logs de auditoria",
         "tooltips.labels.departments": "Departamentos",
         "tooltips.labels.settings": "ConfiguraÃ§Ãµes",
@@ -80,6 +81,10 @@ vi.mock("../modals/departments/DepartmentManagementModal", () => ({
   DepartmentManagementModal: () => null
 }))
 
+vi.mock("../modals/global/pdf/TextPDFModal", () => ({
+  TextPDFModal: () => null
+}))
+
 vi.mock("../ui/effects/Ripple", () => ({
   Ripple: () => null
 }))
@@ -126,6 +131,7 @@ describe("SidebarRail", () => {
     grantedPermissions.add(Permission.PerformLookup)
     grantedPermissions.add(Permission.ReadAuditLogs)
     grantedPermissions.add(Permission.ManageDepartments)
+    grantedPermissions.add(Permission.GeneratePDFs)
 
     render(<SidebarRail />)
 
@@ -136,6 +142,7 @@ describe("SidebarRail", () => {
     expect(
       screen.getByRole("button", { name: "Consultar empresa" })
     ).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "Gerar PDF" })).toBeInTheDocument()
     expect(
       screen.getByRole("button", { name: "Logs de auditoria" })
     ).toBeInTheDocument()
@@ -162,6 +169,9 @@ describe("SidebarRail", () => {
     ).not.toBeInTheDocument()
     expect(
       screen.queryByRole("button", { name: "Consultar empresa" })
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole("button", { name: "Gerar PDF" })
     ).not.toBeInTheDocument()
     expect(
       screen.queryByRole("button", { name: "Logs de auditoria" })
@@ -241,6 +251,7 @@ describe("SidebarRail", () => {
     expect(usePermission).toHaveBeenCalledWith(Permission.PerformLookup)
     expect(usePermission).toHaveBeenCalledWith(Permission.ReadAuditLogs)
     expect(usePermission).toHaveBeenCalledWith(Permission.ManageDepartments)
+    expect(usePermission).toHaveBeenCalledWith(Permission.GeneratePDFs)
   })
 
   it("lets editor modal mouse down events reach native drag listeners", () => {
