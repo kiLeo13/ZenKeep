@@ -140,6 +140,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  user-select: none;
   gap: 12px;
   color: rgb(128, 119, 139);
   font-size: 0.78rem;
