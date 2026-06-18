@@ -1,6 +1,7 @@
-import useWebSocket, { ReadyState } from "react-use-websocket"
 import { useEffect, useRef } from "react"
 import { useTranslation } from "react-i18next"
+import { ReadyState } from "react-use-websocket/dist/lib/constants"
+import { useWebSocket } from "react-use-websocket/dist/lib/use-websocket"
 
 import { gatewayMessageSchema } from "../models/events/GatewayEvent"
 import {

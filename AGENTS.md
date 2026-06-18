@@ -389,6 +389,7 @@ Do not copy environment values into docs or comments unless explicitly needed.
 - The frontend also persists the last applied websocket replay cursor as `last_event_id` in `sessionStorage`. Reconnects must reuse the same `session_id` and send that cursor so the backend can replay missed events in order.
 - The frontend only sends websocket pings while the tab is visible. Hidden-tab reconnect behavior is expected to rely on session resumption plus ordered replay, with a full notes/users resync only after an explicit `RESYNC_REQUIRED` control event.
 - The websocket connect path is intentionally strict: the frontend must provide `session_id`, the `$connect` shim must forward it as `X-Session-Id`, and the backend should reject connects that omit it rather than silently downgrading to transport-only sessions. When present, the shim must also forward `last_event_id` as `X-Last-Event-Id`.
+- Keep `useWebSocketManager` on the typed `react-use-websocket/dist/lib/use-websocket` and `react-use-websocket/dist/lib/constants` imports unless the package adds a production-safe ESM entrypoint. The package index default export can be mis-bundled by Vite 8/Rolldown and crash only on the authenticated `/` route.
 
 ## Workflow Notes
 

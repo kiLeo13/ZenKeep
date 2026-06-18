@@ -1,8 +1,10 @@
+import { renderHook } from "@testing-library/react"
 import type { GatewayMessage } from "@/models/events/GatewayEvent"
 import type { FullNoteResponseData, NoteResponseData } from "@/types/api/notes"
 import type { UserResponseData } from "@/types/api/users"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
+import { useWebSocketManager } from "./useWebSocketManager"
 import {
   handleNoteEvents,
   shouldApplyGatewayMessage
@@ -12,6 +14,20 @@ import { noteService } from "@/services/noteService"
 import { setLastSocketEventId } from "@/services/socketSession"
 import { useNoteStore } from "@/stores/useNotesStore"
 import { useSessionStore } from "@/stores/useSessionStore"
+
+const websocketMock = vi.hoisted(() => ({
+  useWebSocket: vi.fn()
+}))
+
+vi.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key: string) => key
+  })
+}))
+
+vi.mock("react-use-websocket/dist/lib/use-websocket", () => ({
+  useWebSocket: websocketMock.useWebSocket
+}))
 
 type MarkdownNote = {
   id: string
@@ -28,6 +44,35 @@ type MarkdownNote = {
 type FullMarkdownNote = MarkdownNote & {
   content: string
 }
+
+describe("useWebSocketManager", () => {
+  beforeEach(() => {
+    window.localStorage.clear()
+    window.sessionStorage.clear()
+    websocketMock.useWebSocket.mockReset()
+    websocketMock.useWebSocket.mockReturnValue({
+      lastJsonMessage: null,
+      readyState: 0,
+      sendJsonMessage: vi.fn()
+    })
+  })
+
+  it("uses the named react-use-websocket hook for authenticated sessions", () => {
+    window.localStorage.setItem("id_token", "session-token")
+    window.sessionStorage.setItem("zenkeep.ws.session_id", "browser-session")
+
+    renderHook(() => useWebSocketManager())
+
+    expect(websocketMock.useWebSocket).toHaveBeenCalledWith(
+      expect.stringContaining("token=session-token"),
+      expect.objectContaining({
+        share: true,
+        reconnectAttempts: 1000,
+        reconnectInterval: 3000
+      })
+    )
+  })
+})
 
 describe("handleNoteEvents", () => {
   beforeEach(() => {
